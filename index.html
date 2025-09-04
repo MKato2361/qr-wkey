@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="manifest" href="manifest.json">
   <link rel="icon" href="icon-192x192.png">
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@500;700&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <style>
     body {
@@ -23,7 +23,7 @@
     }
     header {
       padding: 1.5em;
-      font-size: 1.4em;
+      font-size: 1.6em;
       font-weight: 700;
     }
     main {
@@ -36,48 +36,64 @@
       padding: 1em;
     }
     #display {
-      padding: 12px;
-      width: 80%;
-      border-radius: 10px;
-      margin-bottom: 15px;
-      font-size: 1.2em;
+      padding: 14px;
+      width: 85%;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      font-size: 1.4em;
       background: #fff;
       color: #000;
       text-align: center;
-      min-height: 1.5em;
+      min-height: 1.8em;
     }
     .keyboard {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-      margin-bottom: 20px;
-      width: 90%;
+      gap: 12px;
+      margin-bottom: 25px;
+      width: 95%;
     }
     .key {
-      padding: 15px;
-      border-radius: 10px;
-      background: #fff;
-      color: #2196f3;
+      padding: 22px;
+      border-radius: 12px;
       font-weight: bold;
-      font-size: 1em;
+      font-size: 1.4em;
       cursor: pointer;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.25);
       transition: transform 0.1s;
+      user-select: none;
     }
     .key:active {
       transform: scale(0.95);
     }
+    /* 色分け */
+    .key.num {
+      background: #ffffff;
+      color: #2196f3;
+    }
+    .key.hk {
+      background: #ff9800;
+      color: #fff;
+    }
+    .key.ctrl {
+      background: #f44336;
+      color: #fff;
+    }
+    .key.back {
+      background: #9c27b0;
+      color: #fff;
+    }
     #ok-btn {
       margin-top: 10px;
-      padding: 12px 24px;
-      border-radius: 25px;
+      padding: 15px 30px;
+      border-radius: 30px;
       border: none;
-      background: #fff;
-      color: #2196f3;
+      background: #4caf50;
+      color: #fff;
       font-weight: bold;
-      font-size: 1.1em;
+      font-size: 1.3em;
       cursor: pointer;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.25);
       transition: transform 0.1s;
     }
     #ok-btn:active {
@@ -88,13 +104,13 @@
     }
     canvas {
       width: 80vw !important;
-      max-width: 300px !important;
+      max-width: 320px !important;
       height: auto !important;
     }
     #result {
-      font-size: 0.9em;
+      font-size: 1em;
       word-wrap: break-word;
-      margin-top: 10px;
+      margin-top: 12px;
     }
   </style>
 </head>
@@ -105,29 +121,29 @@
 
     <div class="keyboard">
       <!-- 1行目: HK / HK-R / CLR -->
-      <div class="key" onclick="pressKey('HK')">HK</div>
-      <div class="key" onclick="pressKey('HK-R')">HK-R</div>
-      <div class="key" onclick="clearInput()">CLR</div>
+      <div class="key hk" onclick="pressKey('HK')">HK</div>
+      <div class="key hk" onclick="pressKey('HK-R')">HK-R</div>
+      <div class="key ctrl" onclick="clearInput()">CLR</div>
 
       <!-- 2行目: 7 8 9 -->
-      <div class="key" onclick="pressKey('7')">7</div>
-      <div class="key" onclick="pressKey('8')">8</div>
-      <div class="key" onclick="pressKey('9')">9</div>
+      <div class="key num" onclick="pressKey('7')">7</div>
+      <div class="key num" onclick="pressKey('8')">8</div>
+      <div class="key num" onclick="pressKey('9')">9</div>
 
       <!-- 3行目: 4 5 6 -->
-      <div class="key" onclick="pressKey('4')">4</div>
-      <div class="key" onclick="pressKey('5')">5</div>
-      <div class="key" onclick="pressKey('6')">6</div>
+      <div class="key num" onclick="pressKey('4')">4</div>
+      <div class="key num" onclick="pressKey('5')">5</div>
+      <div class="key num" onclick="pressKey('6')">6</div>
 
       <!-- 4行目: 1 2 3 -->
-      <div class="key" onclick="pressKey('1')">1</div>
-      <div class="key" onclick="pressKey('2')">2</div>
-      <div class="key" onclick="pressKey('3')">3</div>
+      <div class="key num" onclick="pressKey('1')">1</div>
+      <div class="key num" onclick="pressKey('2')">2</div>
+      <div class="key num" onclick="pressKey('3')">3</div>
 
       <!-- 5行目: 0 - ⌫ -->
-      <div class="key" onclick="pressKey('0')">0</div>
-      <div class="key" onclick="pressKey('-')">-</div>
-      <div class="key" onclick="backspace()">⌫</div>
+      <div class="key num" onclick="pressKey('0')">0</div>
+      <div class="key num" onclick="pressKey('-')">-</div>
+      <div class="key back" onclick="backspace()">⌫</div>
     </div>
 
     <button id="ok-btn" onclick="generateQR()">OK</button>
@@ -142,8 +158,8 @@
     let inputValue = "";
 
     const qrcode = new QRCode(document.getElementById("qrcode"), {
-      width: 300,
-      height: 300
+      width: 320,
+      height: 320
     });
 
     function pressKey(key) {
