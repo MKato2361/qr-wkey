@@ -6,10 +6,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="manifest" href="manifest.json">
   <link rel="icon" href="icon-192x192.png">
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@500;700&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <style>
-    /* ライトモードの基本スタイル */
     body {
       font-family: 'Roboto', sans-serif;
       text-align: center;
@@ -17,21 +16,19 @@
       padding: 0;
       width: 100%;
       overflow-x: hidden;
-      background-color: #f0f0f0;
+      background: linear-gradient(135deg, #f0f0f0, #e0e0e0);
       color: #333;
       display: flex;
       flex-direction: column;
       align-items: center;
       min-height: 100vh;
     }
-
     header {
       padding: 1.5em;
       font-size: 1.6em;
       font-weight: 700;
       color: #333;
     }
-
     main {
       flex: 1;
       display: flex;
@@ -41,178 +38,129 @@
       max-width: 500px;
       padding: 1em;
     }
-
     #qrcode {
-      margin: 10px 0;
+      margin: 10px 0 10px 0;
       display: none;
-      background-color: white;
-      padding: 10px;
-      border-radius: 12px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     }
-
     canvas {
       width: 70vw !important;
       max-width: 280px !important;
       height: auto !important;
-      border-radius: 8px;
     }
-
     #result {
       font-size: 1em;
       word-wrap: break-word;
       margin-top: 8px;
       margin-bottom: 20px;
-      color: #555;
+      color: #333;
       display: none;
-      padding: 8px 12px;
-      background-color: #e0e0e0;
-      border-radius: 8px;
     }
-
     #display {
       padding: 12px;
       width: 85%;
       border-radius: 12px;
       margin-bottom: 20px;
-      font-size: 2.2em;
-      font-weight: 300;
+      font-size: 1.4em;
       background: #e0e0e0;
       color: #000;
-      text-align: right;
+      text-align: center;
       min-height: 1.8em;
-      display: flex;
-      align-items: center;
-      justify-content: flex-end;
-      overflow-x: auto;
-      white-space: nowrap;
     }
-
     .keyboard {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      /* キーの間のスペースを調整 */
-      gap: 12px;
+      gap: 10px;
       margin-bottom: 25px;
       width: 95%;
-      max-width: 350px;
+      max-width: 500px;
     }
-
     .key {
-      /* パディングを固定em単位で設定し、画面サイズに影響されにくくする */
-      padding: 1.1em;
+      padding: 15px;
       border-radius: 50%;
-      font-weight: 500;
-      /* フォントサイズをem単位で固定 */
-      font-size: 1.8em;
+      font-weight: bold;
+      font-size: 1.6em;
       cursor: pointer;
       box-shadow: none;
-      transition: background-color 0.1s, transform 0.1s, color 0.1s;
+      transition: transform 0.1s, background-color 0.1s;
       user-select: none;
       display: flex;
       align-items: center;
       justify-content: center;
-      /* キーのサイズを固定し、縦横比を1:1に保つ */
-      width: 100%;
-      height: 0;
-      padding-top: 100%;
-      position: relative;
+      aspect-ratio: 1 / 1;
     }
-
-    .key span {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-    }
-
     .key:active {
       transform: scale(0.95);
       opacity: 0.8;
     }
-
-    /* iOS電卓風カラーリング (ライトモード) */
-    .key.number {
-      background-color: #d4d4d2;
-      color: #000;
+    /* iOS風カラーリング */
+    .key.num {
+      background: #e0e0e0;
+      color: #333;
     }
-
-    .key.function {
-      background-color: #c0c0c0;
-      color: #000;
+    .key.hk {
+      background: #c0c0c0;
+      color: #333;
     }
-
-    .key.backspace {
-      background-color: #c0c0c0;
-      color: #000;
+    .key.ctrl {
+      background: #c0c0c0;
+      color: #333;
     }
-
+    .key.back {
+      background: #c0c0c0;
+      color: #333;
+    }
     #ok-btn {
       margin-top: 10px;
-      padding: 15px 30px;
+      padding: 12px 24px;
       border-radius: 30px;
       border: none;
-      background: #007aff;
+      background: #ff9500;
       color: #fff;
       font-weight: bold;
-      font-size: 1.6em;
+      font-size: 1.4em;
       cursor: pointer;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
       transition: transform 0.1s, background-color 0.1s;
     }
-
     #ok-btn:active {
       transform: scale(0.97);
-      background-color: #005bb5;
+      background-color: #e68a00;
     }
-
     /* ダークモード対応 */
     @media (prefers-color-scheme: dark) {
       body {
-        background-color: #1c1c1c;
+        background: linear-gradient(135deg, #1c1c1c, #3a3a3a);
         color: #f0f0f0;
       }
-
       header {
         color: #f0f0f0;
       }
-
-      #qrcode {
-        background-color: #3a3a3c;
+      #display {
+        background: #3a3a3a;
+        color: #f0f0f0;
       }
-
+      #qrcode {
+        background-color: #3a3a3a;
+      }
       #result {
-        background-color: #3a3a3c;
+        background-color: #3a3a3a;
         color: #d4d4d2;
       }
-
-      #display {
-        background: #3a3a3c;
+      .key.num {
+        background: #505050;
         color: #f0f0f0;
       }
-
-      .key.number {
-        background-color: #505050;
+      .key.hk, .key.ctrl, .key.back {
+        background: #6a6a6a;
         color: #f0f0f0;
       }
-
-      .key.function {
-        background-color: #6a6a6a;
-        color: #f0f0f0;
-      }
-      
-      .key.backspace {
-        background-color: #6a6a6a;
-        color: #f0f0f0;
-      }
-
       #ok-btn {
-        background: #0a84ff;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+        background: #ff9500;
+        color: #f0f0f0;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.25);
       }
-
       #ok-btn:active {
-        background-color: #007aff;
+        background-color: #e68a00;
       }
     }
   </style>
@@ -226,21 +174,21 @@
     <div id="display"></div>
 
     <div class="keyboard">
-      <div class="key function" onclick="pressKey('HK')"><span>HK</span></div>
-      <div class="key function" onclick="pressKey('HK-R')"><span>HK-R</span></div>
-      <div class="key function" onclick="clearInput()"><span>C</span></div>
-      <div class="key number" onclick="pressKey('7')"><span>7</span></div>
-      <div class="key number" onclick="pressKey('8')"><span>8</span></div>
-      <div class="key number" onclick="pressKey('9')"><span>9</span></div>
-      <div class="key number" onclick="pressKey('4')"><span>4</span></div>
-      <div class="key number" onclick="pressKey('5')"><span>5</span></div>
-      <div class="key number" onclick="pressKey('6')"><span>6</span></div>
-      <div class="key number" onclick="pressKey('1')"><span>1</span></div>
-      <div class="key number" onclick="pressKey('2')"><span>2</span></div>
-      <div class="key number" onclick="pressKey('3')"><span>3</span></div>
-      <div class="key number" onclick="pressKey('0')"><span>0</span></div>
-      <div class="key number" onclick="pressKey('-')"><span>-</span></div>
-      <div class="key backspace" onclick="backspace()"><span>⌫</span></div>
+      <div class="key hk" onclick="pressKey('HK')">HK</div>
+      <div class="key hk" onclick="pressKey('HK-R')">HK-R</div>
+      <div class="key ctrl" onclick="clearInput()">CLR</div>
+      <div class="key num" onclick="pressKey('7')">7</div>
+      <div class="key num" onclick="pressKey('8')">8</div>
+      <div class="key num" onclick="pressKey('9')">9</div>
+      <div class="key num" onclick="pressKey('4')">4</div>
+      <div class="key num" onclick="pressKey('5')">5</div>
+      <div class="key num" onclick="pressKey('6')">6</div>
+      <div class="key num" onclick="pressKey('1')">1</div>
+      <div class="key num" onclick="pressKey('2')">2</div>
+      <div class="key num" onclick="pressKey('3')">3</div>
+      <div class="key num" onclick="pressKey('0')">0</div>
+      <div class="key num" onclick="pressKey('-')">-</div>
+      <div class="key back" onclick="backspace()">⌫</div>
     </div>
 
     <button id="ok-btn" onclick="generateQR()">QRコード作成</button>
