@@ -37,13 +37,21 @@
       padding: 1em;
     }
     #qrcode {
-      margin: 10px 0 20px 0;
-      display: none; /* ← 初期は非表示 */
+      margin: 10px 0 10px 0;
+      display: none; /* 初期は非表示 */
     }
     canvas {
       width: 70vw !important;
       max-width: 280px !important;
       height: auto !important;
+    }
+    #result {
+      font-size: 1em;
+      word-wrap: break-word;
+      margin-top: 8px;
+      margin-bottom: 20px;
+      color: #333;
+      display: none; /* 初期は非表示 */
     }
     #display {
       padding: 12px;
@@ -97,12 +105,6 @@
     #ok-btn:active {
       transform: scale(0.97);
     }
-    #result {
-      font-size: 1em;
-      word-wrap: break-word;
-      margin-top: 12px;
-      color: #333;
-    }
   </style>
 </head>
 <body>
@@ -110,6 +112,8 @@
   <main>
     <!-- QRコード（初期は非表示） -->
     <div id="qrcode"></div>
+    <!-- URL文字列（QRの直下に表示） -->
+    <p id="result"></p>
 
     <!-- 入力欄 -->
     <div id="display"></div>
@@ -133,14 +137,15 @@
       <div class="key back" onclick="backspace()">⌫</div>
     </div>
 
-    <button id="ok-btn" onclick="generateQR()">OK</button>
-    <p id="result"></p>
+    <!-- ボタン -->
+    <button id="ok-btn" onclick="generateQR()">QRコード作成</button>
   </main>
 
   <script>
     const prefix = "https://jes24.jp/?e=";
     const display = document.getElementById("display");
     const qrContainer = document.getElementById("qrcode");
+    const resultText = document.getElementById("result");
     let inputValue = "";
 
     const qrcode = new QRCode(qrContainer, {
@@ -172,13 +177,15 @@
     function backspace() {
       inputValue = inputValue.slice(0, -1);
       updateDisplay();
+      if (inputValue === "") {
+        hideQR();
+      }
     }
 
     function clearInput() {
       inputValue = "";
       updateDisplay();
-      qrContainer.style.display = "none"; // 入力クリアでQRも非表示
-      document.getElementById("result").innerText = "";
+      hideQR();
     }
 
     function updateDisplay() {
@@ -193,8 +200,15 @@
       const url = prefix + inputValue;
       qrcode.clear();
       qrcode.makeCode(url);
-      qrContainer.style.display = "block"; // 生成時に表示
-      document.getElementById("result").innerText = url;
+      qrContainer.style.display = "block";
+      resultText.style.display = "block";
+      resultText.innerText = url;
+    }
+
+    function hideQR() {
+      qrContainer.style.display = "none";
+      resultText.style.display = "none";
+      resultText.innerText = "";
     }
 
     if ('serviceWorker' in navigator) {
