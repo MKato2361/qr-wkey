@@ -14,8 +14,8 @@
       text-align: center;
       margin: 0;
       padding: 0;
-      background: linear-gradient(135deg, #2196f3, #21cbf3);
-      color: #fff;
+      background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+      color: #333;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -25,6 +25,7 @@
       padding: 1.5em;
       font-size: 1.6em;
       font-weight: 700;
+      color: #1565c0;
     }
     main {
       flex: 1;
@@ -35,8 +36,16 @@
       max-width: 500px;
       padding: 1em;
     }
+    #qrcode {
+      margin: 10px 0 20px 0;
+    }
+    canvas {
+      width: 70vw !important;
+      max-width: 280px !important;
+      height: auto !important;
+    }
     #display {
-      padding: 14px;
+      padding: 12px;
       width: 85%;
       border-radius: 12px;
       margin-bottom: 20px;
@@ -49,106 +58,101 @@
     .keyboard {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 12px;
+      gap: 10px;
       margin-bottom: 25px;
       width: 95%;
     }
     .key {
-      padding: 22px;
+      padding: 15px;
       border-radius: 12px;
       font-weight: bold;
-      font-size: 1.4em;
+      font-size: 1.6em; /* 文字のみ大きく */
       cursor: pointer;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
       transition: transform 0.1s;
       user-select: none;
     }
     .key:active {
       transform: scale(0.95);
     }
-    /* 色分け */
+    /* 色分けを淡い色に */
     .key.num {
       background: #ffffff;
-      color: #2196f3;
+      color: #1565c0;
     }
     .key.hk {
-      background: #ff9800;
-      color: #fff;
+      background: #ffe0b2;
+      color: #e65100;
     }
     .key.ctrl {
-      background: #f44336;
-      color: #fff;
+      background: #ffcdd2;
+      color: #b71c1c;
     }
     .key.back {
-      background: #9c27b0;
-      color: #fff;
+      background: #e1bee7;
+      color: #4a148c;
     }
     #ok-btn {
       margin-top: 10px;
-      padding: 15px 30px;
+      padding: 12px 24px;
       border-radius: 30px;
       border: none;
-      background: #4caf50;
-      color: #fff;
+      background: #c8e6c9;
+      color: #1b5e20;
       font-weight: bold;
-      font-size: 1.3em;
+      font-size: 1.4em;
       cursor: pointer;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
       transition: transform 0.1s;
     }
     #ok-btn:active {
       transform: scale(0.97);
     }
-    #qrcode {
-      margin: 20px 0;
-    }
-    canvas {
-      width: 80vw !important;
-      max-width: 320px !important;
-      height: auto !important;
-    }
     #result {
       font-size: 1em;
       word-wrap: break-word;
       margin-top: 12px;
+      color: #333;
     }
   </style>
 </head>
 <body>
   <header>QRコード生成</header>
   <main>
+    <!-- QRコードを上に配置 -->
+    <div id="qrcode"></div>
+
+    <!-- 入力欄 -->
     <div id="display"></div>
 
+    <!-- 電卓風キーボード -->
     <div class="keyboard">
-      <!-- 1行目: HK / HK-R / CLR -->
+      <!-- 1行目 -->
       <div class="key hk" onclick="pressKey('HK')">HK</div>
       <div class="key hk" onclick="pressKey('HK-R')">HK-R</div>
       <div class="key ctrl" onclick="clearInput()">CLR</div>
-
-      <!-- 2行目: 7 8 9 -->
+      <!-- 2行目 -->
       <div class="key num" onclick="pressKey('7')">7</div>
       <div class="key num" onclick="pressKey('8')">8</div>
       <div class="key num" onclick="pressKey('9')">9</div>
-
-      <!-- 3行目: 4 5 6 -->
+      <!-- 3行目 -->
       <div class="key num" onclick="pressKey('4')">4</div>
       <div class="key num" onclick="pressKey('5')">5</div>
       <div class="key num" onclick="pressKey('6')">6</div>
-
-      <!-- 4行目: 1 2 3 -->
+      <!-- 4行目 -->
       <div class="key num" onclick="pressKey('1')">1</div>
       <div class="key num" onclick="pressKey('2')">2</div>
       <div class="key num" onclick="pressKey('3')">3</div>
-
-      <!-- 5行目: 0 - ⌫ -->
+      <!-- 5行目 -->
       <div class="key num" onclick="pressKey('0')">0</div>
       <div class="key num" onclick="pressKey('-')">-</div>
       <div class="key back" onclick="backspace()">⌫</div>
     </div>
 
+    <!-- OKボタン -->
     <button id="ok-btn" onclick="generateQR()">OK</button>
 
-    <div id="qrcode"></div>
+    <!-- URL表示 -->
     <p id="result"></p>
   </main>
 
@@ -158,12 +162,11 @@
     let inputValue = "";
 
     const qrcode = new QRCode(document.getElementById("qrcode"), {
-      width: 320,
-      height: 320
+      width: 280,
+      height: 280
     });
 
     function pressKey(key) {
-      // 入力ルールチェック
       if (inputValue === "") {
         if (key !== "HK" && key !== "HK-R") {
           alert("最初は HK または HK-R を選んでください");
@@ -180,7 +183,6 @@
           return;
         }
       }
-
       inputValue += key;
       updateDisplay();
     }
@@ -210,7 +212,6 @@
       document.getElementById("result").innerText = url;
     }
 
-    // PWA: Service Worker登録
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('service-worker.js')
         .then(reg => console.log("SW登録成功", reg))
