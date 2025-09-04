@@ -91,21 +91,21 @@
     .keyboard {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      /* キーの間のスペースを画面幅に応じて調整 */
       gap: 3vw; 
       margin-bottom: 25px;
       width: 95%;
-      max-width: 500px;
+      /* iPhone SE3の幅に収まるように固定値を設定 */
+      max-width: 350px;
     }
 
     .key {
       /* パディングを画面幅に応じて調整 */
-      padding-top: 5vw;
-      padding-bottom: 5vw;
+      padding-top: 2.5vw;
+      padding-bottom: 2.5vw;
       border-radius: 50%;
       font-weight: 500;
       /* フォントサイズを画面幅に応じて調整 */
-      font-size: 7vw;
+      font-size: 5.5vw;
       cursor: pointer;
       box-shadow: none;
       transition: background-color 0.1s, transform 0.1s, color 0.1s;
