@@ -14,6 +14,8 @@
       text-align: center;
       margin: 0;
       padding: 0;
+      width: 100%;
+      overflow-x: hidden; /* 横スクロール禁止 */
       background: linear-gradient(135deg, #e3f2fd, #bbdefb);
       color: #333;
       display: flex;
@@ -69,7 +71,8 @@
       grid-template-columns: repeat(3, 1fr);
       gap: 10px;
       margin-bottom: 25px;
-      width: 95%;
+      width: 100%;
+      max-width: 500px;   /* mainと同じ上限 */
     }
     .key {
       padding: 15px;
