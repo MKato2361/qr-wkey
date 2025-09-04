@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>QRコード生成</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icon-192x192.png">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      text-align: center;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #2196f3, #21cbf3);
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+    header {
+      padding: 1.5em;
+      font-size: 1.4em;
+      font-weight: 700;
+    }
+    main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      width: 100%;
+      max-width: 500px;
+      padding: 1em;
+    }
+    #display {
+      padding: 12px;
+      width: 80%;
+      border-radius: 10px;
+      margin-bottom: 15px;
+      font-size: 1.2em;
+      background: #fff;
+      color: #000;
+      text-align: center;
+      min-height: 1.5em;
+    }
+    .keyboard {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-bottom: 20px;
+      width: 90%;
+    }
+    .key {
+      padding: 15px;
+      border-radius: 10px;
+      background: #fff;
+      color: #2196f3;
+      font-weight: bold;
+      font-size: 1em;
+      cursor: pointer;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      transition: transform 0.1s;
+    }
+    .key:active {
+      transform: scale(0.95);
+    }
+    #ok-btn {
+      margin-top: 10px;
+      padding: 12px 24px;
+      border-radius: 25px;
+      border: none;
+      background: #fff;
+      color: #2196f3;
+      font-weight: bold;
+      font-size: 1.1em;
+      cursor: pointer;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      transition: transform 0.1s;
+    }
+    #ok-btn:active {
+      transform: scale(0.97);
+    }
+    #qrcode {
+      margin: 20px 0;
+    }
+    canvas {
+      width: 80vw !important;
+      max-width: 300px !important;
+      height: auto !important;
+    }
+    #result {
+      font-size: 0.9em;
+      word-wrap: break-word;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <header>QRコード生成</header>
+  <main>
+    <div id="display"></div>
+
+    <div class="keyboard">
+      <div class="key" onclick="pressKey('HK')">HK</div>
+      <div class="key" onclick="pressKey('HK-R')">HK-R</div>
+      <div class="key" onclick="pressKey('1')">1</div>
+      <div class="key" onclick="pressKey('2')">2</div>
+      <div class="key" onclick="pressKey('3')">3</div>
+      <div class="key" onclick="pressKey('4')">4</div>
+      <div class="key" onclick="pressKey('5')">5</div>
+      <div class="key" onclick="pressKey('6')">6</div>
+      <div class="key" onclick="pressKey('7')">7</div>
+      <div class="key" onclick="pressKey('8')">8</div>
+      <div class="key" onclick="pressKey('9')">9</div>
+      <div class="key" onclick="pressKey('0')">0</div>
+      <div class="key" onclick="pressKey('-')">-</div>
+      <div class="key" onclick="backspace()">⌫</div>
+      <div class="key" onclick="clearInput()">CLR</div>
+    </div>
+
+    <button id="ok-btn" onclick="generateQR()">OK</button>
+
+    <div id="qrcode"></div>
+    <p id="result"></p>
+  </main>
+
+  <script>
+    const prefix = "https://jes24.jp/?e=";
+    const display = document.getElementById("display");
+    let inputValue = "";
+
+    const qrcode = new QRCode(document.getElementById("qrcode"), {
+      width: 300,
+      height: 300
+    });
+
+    function pressKey(key) {
+      // 入力ルールチェック
+      if (inputValue === "") {
+        if (key !== "HK" && key !== "HK-R") {
+          alert("最初は HK または HK-R を選んでください");
+          return;
+        }
+      } else {
+        if ((inputValue.startsWith("HK") && key === "HK-R") ||
+            (inputValue.startsWith("HK-R") && key === "HK")) {
+          alert("HK と HK-R は同時に使えません");
+          return;
+        }
+        if (key === "HK" || key === "HK-R") {
+          alert("HK/HK-R は最初のみ入力できます");
+          return;
+        }
+      }
+
+      inputValue += key;
+      updateDisplay();
+    }
+
+    function backspace() {
+      inputValue = inputValue.slice(0, -1);
+      updateDisplay();
+    }
+
+    function clearInput() {
+      inputValue = "";
+      updateDisplay();
+    }
+
+    function updateDisplay() {
+      display.textContent = inputValue;
+    }
+
+    function generateQR() {
+      if (!inputValue) {
+        alert("入力が空です");
+        return;
+      }
+      const url = prefix + inputValue;
+      qrcode.clear();
+      qrcode.makeCode(url);
+      document.getElementById("result").innerText = url;
+    }
+
+    // PWA: Service Worker登録
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('service-worker.js')
+        .then(reg => console.log("SW登録成功", reg))
+        .catch(err => console.log("SW登録失敗", err));
+    }
+  </script>
+</body>
+</html>
