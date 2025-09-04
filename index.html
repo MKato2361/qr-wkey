@@ -38,6 +38,7 @@
     }
     #qrcode {
       margin: 10px 0 20px 0;
+      display: none; /* ← 初期は非表示 */
     }
     canvas {
       width: 70vw !important;
@@ -66,7 +67,7 @@
       padding: 15px;
       border-radius: 12px;
       font-weight: bold;
-      font-size: 1.6em; /* 文字のみ大きく */
+      font-size: 1.6em;
       cursor: pointer;
       box-shadow: 0 2px 6px rgba(0,0,0,0.15);
       transition: transform 0.1s;
@@ -75,23 +76,11 @@
     .key:active {
       transform: scale(0.95);
     }
-    /* 色分けを淡い色に */
-    .key.num {
-      background: #ffffff;
-      color: #1565c0;
-    }
-    .key.hk {
-      background: #ffe0b2;
-      color: #e65100;
-    }
-    .key.ctrl {
-      background: #ffcdd2;
-      color: #b71c1c;
-    }
-    .key.back {
-      background: #e1bee7;
-      color: #4a148c;
-    }
+    /* 色分け（淡色） */
+    .key.num { background: #ffffff; color: #1565c0; }
+    .key.hk { background: #ffe0b2; color: #e65100; }
+    .key.ctrl { background: #ffcdd2; color: #b71c1c; }
+    .key.back { background: #e1bee7; color: #4a148c; }
     #ok-btn {
       margin-top: 10px;
       padding: 12px 24px;
@@ -119,7 +108,7 @@
 <body>
   <header>QRコード生成</header>
   <main>
-    <!-- QRコードを上に配置 -->
+    <!-- QRコード（初期は非表示） -->
     <div id="qrcode"></div>
 
     <!-- 入力欄 -->
@@ -127,41 +116,34 @@
 
     <!-- 電卓風キーボード -->
     <div class="keyboard">
-      <!-- 1行目 -->
       <div class="key hk" onclick="pressKey('HK')">HK</div>
       <div class="key hk" onclick="pressKey('HK-R')">HK-R</div>
       <div class="key ctrl" onclick="clearInput()">CLR</div>
-      <!-- 2行目 -->
       <div class="key num" onclick="pressKey('7')">7</div>
       <div class="key num" onclick="pressKey('8')">8</div>
       <div class="key num" onclick="pressKey('9')">9</div>
-      <!-- 3行目 -->
       <div class="key num" onclick="pressKey('4')">4</div>
       <div class="key num" onclick="pressKey('5')">5</div>
       <div class="key num" onclick="pressKey('6')">6</div>
-      <!-- 4行目 -->
       <div class="key num" onclick="pressKey('1')">1</div>
       <div class="key num" onclick="pressKey('2')">2</div>
       <div class="key num" onclick="pressKey('3')">3</div>
-      <!-- 5行目 -->
       <div class="key num" onclick="pressKey('0')">0</div>
       <div class="key num" onclick="pressKey('-')">-</div>
       <div class="key back" onclick="backspace()">⌫</div>
     </div>
 
-    <!-- OKボタン -->
     <button id="ok-btn" onclick="generateQR()">OK</button>
-
-    <!-- URL表示 -->
     <p id="result"></p>
   </main>
 
   <script>
     const prefix = "https://jes24.jp/?e=";
     const display = document.getElementById("display");
+    const qrContainer = document.getElementById("qrcode");
     let inputValue = "";
 
-    const qrcode = new QRCode(document.getElementById("qrcode"), {
+    const qrcode = new QRCode(qrContainer, {
       width: 280,
       height: 280
     });
@@ -195,6 +177,8 @@
     function clearInput() {
       inputValue = "";
       updateDisplay();
+      qrContainer.style.display = "none"; // 入力クリアでQRも非表示
+      document.getElementById("result").innerText = "";
     }
 
     function updateDisplay() {
@@ -209,6 +193,7 @@
       const url = prefix + inputValue;
       qrcode.clear();
       qrcode.makeCode(url);
+      qrContainer.style.display = "block"; // 生成時に表示
       document.getElementById("result").innerText = url;
     }
 
