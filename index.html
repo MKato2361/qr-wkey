@@ -43,7 +43,7 @@
     }
 
     #qrcode {
-      margin: 10px 0 10px 0;
+      margin: 10px 0;
       display: none;
       background-color: white;
       padding: 10px;
@@ -91,21 +91,20 @@
     .keyboard {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 3vw; 
+      /* キーの間のスペースを調整 */
+      gap: 12px;
       margin-bottom: 25px;
       width: 95%;
-      /* iPhone SE3の幅に収まるように固定値を設定 */
       max-width: 350px;
     }
 
     .key {
-      /* パディングを画面幅に応じて調整 */
-      padding-top: 2.5vw;
-      padding-bottom: 2.5vw;
+      /* パディングを固定em単位で設定し、画面サイズに影響されにくくする */
+      padding: 1.1em;
       border-radius: 50%;
       font-weight: 500;
-      /* フォントサイズを画面幅に応じて調整 */
-      font-size: 5.5vw;
+      /* フォントサイズをem単位で固定 */
+      font-size: 1.8em;
       cursor: pointer;
       box-shadow: none;
       transition: background-color 0.1s, transform 0.1s, color 0.1s;
@@ -113,7 +112,18 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      aspect-ratio: 1 / 1;
+      /* キーのサイズを固定し、縦横比を1:1に保つ */
+      width: 100%;
+      height: 0;
+      padding-top: 100%;
+      position: relative;
+    }
+
+    .key span {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
     }
 
     .key:active {
@@ -216,21 +226,21 @@
     <div id="display"></div>
 
     <div class="keyboard">
-      <div class="key function" onclick="pressKey('HK')">HK</div>
-      <div class="key function" onclick="pressKey('HK-R')">HK-R</div>
-      <div class="key function" onclick="clearInput()">C</div>
-      <div class="key number" onclick="pressKey('7')">7</div>
-      <div class="key number" onclick="pressKey('8')">8</div>
-      <div class="key number" onclick="pressKey('9')">9</div>
-      <div class="key number" onclick="pressKey('4')">4</div>
-      <div class="key number" onclick="pressKey('5')">5</div>
-      <div class="key number" onclick="pressKey('6')">6</div>
-      <div class="key number" onclick="pressKey('1')">1</div>
-      <div class="key number" onclick="pressKey('2')">2</div>
-      <div class="key number" onclick="pressKey('3')">3</div>
-      <div class="key number" onclick="pressKey('0')">0</div>
-      <div class="key number" onclick="pressKey('-')">-</div>
-      <div class="key backspace" onclick="backspace()">⌫</div>
+      <div class="key function" onclick="pressKey('HK')"><span>HK</span></div>
+      <div class="key function" onclick="pressKey('HK-R')"><span>HK-R</span></div>
+      <div class="key function" onclick="clearInput()"><span>C</span></div>
+      <div class="key number" onclick="pressKey('7')"><span>7</span></div>
+      <div class="key number" onclick="pressKey('8')"><span>8</span></div>
+      <div class="key number" onclick="pressKey('9')"><span>9</span></div>
+      <div class="key number" onclick="pressKey('4')"><span>4</span></div>
+      <div class="key number" onclick="pressKey('5')"><span>5</span></div>
+      <div class="key number" onclick="pressKey('6')"><span>6</span></div>
+      <div class="key number" onclick="pressKey('1')"><span>1</span></div>
+      <div class="key number" onclick="pressKey('2')"><span>2</span></div>
+      <div class="key number" onclick="pressKey('3')"><span>3</span></div>
+      <div class="key number" onclick="pressKey('0')"><span>0</span></div>
+      <div class="key number" onclick="pressKey('-')"><span>-</span></div>
+      <div class="key backspace" onclick="backspace()"><span>⌫</span></div>
     </div>
 
     <button id="ok-btn" onclick="generateQR()">QRコード作成</button>
